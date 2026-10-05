@@ -32,6 +32,43 @@ async function create(){
  inbox=Array.isArray(result)?result[0]:result;
  $("detail").hidden=true;showInbox();await messages();
 }
+
+function renderBody(mail){
+ const body=$("body");body.replaceChildren();
+ const safeURL=value=>{try{const u=new URL(value);return ["https:","http:"].includes(u.protocol)?u.href:null;}catch{return null;}};
+ const link=(href,label)=>{const a=document.createElement("a");a.href=href;a.textContent=label;a.target="_blank";a.rel="noopener noreferrer";a.referrerPolicy="no-referrer";return a;};
+ if(mail.body_html){
+ const parsed=new DOMParser().parseFromString(mail.body_html,"text/html");
+ const allowed=new Set(["P","DIV","SPAN","BR","STRONG","B","EM","I","U","S","H1","H2","H3","H4","UL","OL","LI","BLOCKQUOTE","PRE","CODE","TABLE","TBODY","THEAD","TR","TD","TH","HR","A"]);
+ const blocked=new Set(["SCRIPT","STYLE","IFRAME","OBJECT","EMBED","FORM","INPUT","BUTTON","SVG","MATH","LINK","META","BASE","TEMPLATE","NOSCRIPT"]);
+ const clean=(node,parent)=>{
+ if(node.nodeType===3){parent.append(document.createTextNode(node.textContent));return;}
+ if(node.nodeType!==1||blocked.has(node.tagName))return;
+ if(node.tagName==="IMG"){if(node.getAttribute("alt"))parent.append(document.createTextNode(node.getAttribute("alt")));return;}
+ let target=parent;
+ if(allowed.has(node.tagName)){
+ target=document.createElement(node.tagName.toLowerCase());
+ if(node.tagName==="A"){
+ const url=safeURL(node.getAttribute("href"));if(url){target=link(url,"");}else target=document.createElement("span");
+ }
+ parent.append(target);
+ }
+ for(const child of node.childNodes)clean(child,target);
+ };
+ for(const child of parsed.body.childNodes)clean(child,body);
+ }else{
+ const text=mail.body_text||"此邮件没有正文。";let cursor=0;
+ for(const match of text.matchAll(/https?:\/\/[^\s<>"']+/g)){
+ body.append(document.createTextNode(text.slice(cursor,match.index)));
+ const href=safeURL(match[0]);body.append(href?link(href,match[0]):document.createTextNode(match[0]));
+ cursor=match.index+match[0].length;
+ }
+ body.append(document.createTextNode(text.slice(cursor)));
+ body.classList.add("plain-text");
+ }
+ if(mail.body_html)body.classList.remove("plain-text");
+}
+
 async function messages(){
  if(!inbox)return;
  if(new Date(inbox.expires_at)<=new Date()){inbox=null;showInbox();$("list").textContent="邮箱已停用";$("detail").hidden=true;return;}
@@ -43,10 +80,10 @@ async function messages(){
  const title=document.createElement("strong");title.textContent=row.subject||"（无主题）";
  const meta=document.createElement("small");meta.textContent=row.sender+" · "+new Date(row.received_at).toLocaleString();
  button.append(title,meta);button.onclick=()=>run(async()=>{
- const details=await request("/rest/v1/temp_mail_messages?select=subject,sender,body_text&id=eq."+encodeURIComponent(row.id));
+ const details=await request("/rest/v1/temp_mail_messages?select=subject,sender,body_text,body_html&id=eq."+encodeURIComponent(row.id));
  if(!details.length)throw new Error("邮件已到期或不可访问");
  $("subject").textContent=details[0].subject||"（无主题）";$("sender").textContent=details[0].sender;
- $("body").textContent=details[0].body_text||"此邮件没有纯文本正文。";$("detail").hidden=false;
+ renderBody(details[0]);$("detail").hidden=false;
  });list.append(button);
  }
  status("已更新 · "+new Date().toLocaleTimeString());

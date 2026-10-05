@@ -3,7 +3,7 @@ const KEY="sb_publishable_dixJle7kBjtfX2L55W7p0g_lYGVz7kR";
 const $=id=>document.getElementById(id);
 let session=null,inbox=null,loading=false;
 function status(t){$("status").textContent=t}
-function enabled(v){for(const id of ["copy","create","refresh"])$(id).disabled=!v;}
+function enabled(v){for(const id of ["copy","create","refresh","domain"])$(id).disabled=!v;}
 async function request(path,options={},auth=true){
  const response=await fetch(URL_BASE+path,{...options,headers:{apikey:KEY,"Content-Type":"application/json",...(auth?{Authorization:"Bearer "+session.access_token}:{}),...options.headers}});
  const body=await response.json().catch(()=>null);
@@ -24,11 +24,12 @@ async function identity(){
 }
 function showInbox(){
  $("address").value=inbox?.address||"";
+ if(inbox)$("domain").value=inbox.address.split("@")[1];
  $("expiry").textContent=inbox?"到期时间："+new Date(inbox.expires_at).toLocaleString():"邮箱已到期，请生成新地址";
  $("copy").disabled=!inbox;
 }
 async function create(){
- const result=await request("/rest/v1/rpc/create_temp_mail_inbox",{method:"POST",body:"{}"});
+ const result=await request("/rest/v1/rpc/create_temp_mail_inbox",{method:"POST",body:JSON.stringify({p_domain:$("domain").value})});
  inbox=Array.isArray(result)?result[0]:result;
  $("detail").hidden=true;showInbox();await messages();
 }
@@ -93,6 +94,7 @@ async function run(fn){
  try{await identity();await fn();}catch(e){status(e.message);}finally{loading=false;enabled(!!session);$("copy").disabled=!inbox;}
 }
 $("copy").onclick=()=>navigator.clipboard.writeText(inbox.address).then(()=>status("地址已复制")).catch(()=>status("请选中上方地址手动复制"));
+$("domain").onchange=()=>{status("已选择 "+$("domain").value+"，点击生成新地址后生效");};
 $("create").onclick=()=>run(create);$("refresh").onclick=()=>run(messages);
 await run(async()=>{
  const boxes=await request("/rest/v1/temp_mail_inboxes?select=*&order=created_at.desc&limit=1");

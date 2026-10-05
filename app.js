@@ -11,8 +11,11 @@ async function request(path,options={},auth=true){
  return body;
 }
 async function identity(){
+ return navigator.locks?navigator.locks.request("temp-mail-auth",ensureIdentity):ensureIdentity();
+}
+async function ensureIdentity(){
+ try{const saved=JSON.parse(localStorage.getItem("temp-mail-session"));if(saved)session=saved;}catch{}
  if(session&&session.expires_at*1000>Date.now()+60000)return;
- if(!session){try{session=JSON.parse(localStorage.getItem("temp-mail-session"));}catch{}}
  if(session?.refresh_token){
  session=await request("/auth/v1/token?grant_type=refresh_token",{method:"POST",body:JSON.stringify({refresh_token:session.refresh_token})},false);
  }else{

@@ -1,23 +1,23 @@
 # Temporary mail
-收信域名：temp.kellykhoo.com。前端部署于 GitHub Pages，后端为 Supabase fpidzorviwktkqzntpmv。
-## Usage
-打开网页后通过 Supabase anonymous sign-in 建立浏览器身份；自动生成随机地址。刷新页面保留身份，清除浏览器数据后不能恢复。
-邮箱有效期为24小时，到期停止查询和接收写入。pg_cron 每10分钟删除过期邮箱并级联清理其邮件。
-## Backend setup
-Supabase Authentication > Sign In / Providers: enable anonymous sign-ins.
-Supabase Edge Functions > Secrets:
-- RESEND_API_KEY: Resend API key with permission to retrieve received emails.
-- RESEND_WEBHOOK_SECRET: signing secret for this webhook.
-Do not put either secret in GitHub or frontend files. The frontend publishable key is intentionally public; row-level security controls access.
-Resend Webhooks: subscribe only to email.received:
-https://fpidzorviwktkqzntpmv.supabase.co/functions/v1/resend-inbound
-The function uses raw-body signature verification and returns retryable errors on provider/database failures. Unique (inbox_id,provider_message_id) prevents duplicate webhook deliveries.
-## GitHub Pages
-Settings > Pages: Deploy from a branch, main, / (root). No custom domain is needed. Do not change root domain DNS.
-## Limitations
-Only plain-text message bodies are currently displayed. Attachments and HTML-only bodies are not displayed.
-Expiry cleanup covers application data in Supabase; Resend retention is managed separately by Resend.
-No forwarding or sending is implemented. No inbound content executes commands.
+
+Receiving domain: temp.kellykhoo.com. Frontend: GitHub Pages. Backend: Supabase fpidzorviwktkqzntpmv.
+
+Anonymous browser identities own separate inboxes enforced by RLS. Address names use 5–10 random hexadecimal characters, unique constraints and collision retries. Existing 32-character addresses remain valid until expiry. Inboxes expire after 24 hours; cron deletes expired inboxes and messages every 10 minutes.
+
+## Receiving
+
+Subscribe the Resend webhook to email.received at https://fpidzorviwktkqzntpmv.supabase.co/functions/v1/resend-inbound. Backend secrets RESEND_API_KEY and RESEND_WEBHOOK_SECRET belong only in Supabase Edge Function Secrets. Public frontend uses a publishable key only.
+
+The handler verifies signatures, retrieves text and HTML, and idempotently stores messages. HTML rendering rebuilds allowed elements and HTTP/HTTPS links, removes executable content and remote images, and opens links with noopener/noreferrer. Plain-text URLs are clickable. Attachments and original HTML styling are not supported. No forwarding is configured.
+
+## Deployment
+
+GitHub Actions workflow .github/workflows/pages.yml publishes the static site. Root domain website/DNS is untouched.
+
+## Additional domains pending DNS
+
+mail.kellykhoo.com and inbox.kellykhoo.com are registered in Resend with receiving enabled and sending disabled. They are NOT enabled in application address generation until DNS is verified. Add each subdomain's MX and DKIM records from its Resend dashboard. Never replace root-domain MX records.
+
 ## Verification
-Database checks passed for 50 distinct random addresses and cross-user inbox isolation. This is not a simultaneous load test.
-Live browser and real-email verification must be completed after deployment and webhook configuration.
+
+Database identity isolation and expiry/cascade cleanup checks passed. 100 generated short addresses were distinct and ranged from 5 to 10 characters. HTML button links, plaintext URLs and unsafe-markup filtering tests passed. A real inbound message arrived with HTTP 200; its missing HTML was restored by replaying the signed webhook after the fix. Pages deployment and visible link rendering were verified. This is not a concurrent load test.

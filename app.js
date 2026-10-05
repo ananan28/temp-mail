@@ -17,7 +17,7 @@ async function ensureIdentity(){
  try{const saved=JSON.parse(localStorage.getItem("temp-mail-session"));if(saved)session=saved;}catch{}
  if(session&&session.expires_at*1000>Date.now()+60000)return;
  if(session?.refresh_token){
- session=await request("/auth/v1/token?grant_type=refresh_token",{method:"POST",body:JSON.stringify({refresh_token:session.refresh_token})},false);
+ try{session=await request("/auth/v1/token?grant_type=refresh_token",{method:"POST",body:JSON.stringify({refresh_token:session.refresh_token})},false);}catch(e){$("reconnect").hidden=false;throw new Error("浏览器身份已失效。重新建立身份后将使用新的独立收件箱。");}
  }else{
  session=await request("/auth/v1/signup",{method:"POST",body:"{}"},false);
  }
@@ -30,6 +30,10 @@ function showInbox(){
  if(inbox)$("domain").value=inbox.address.split("@")[1];
  $("expiry").textContent=inbox?"到期时间："+new Date(inbox.expires_at).toLocaleString():"邮箱已到期，请生成新地址";
  $("copy").disabled=!inbox;
+}
+async function loadInbox(){
+ const boxes=await request("/rest/v1/temp_mail_inboxes?select=*&order=created_at.desc&limit=1");
+ if(boxes.length){inbox=boxes[0];showInbox();await messages();}else await create();
 }
 async function create(){
  const result=await request("/rest/v1/rpc/create_temp_mail_inbox",{method:"POST",body:JSON.stringify({p_domain:$("domain").value})});
@@ -99,8 +103,6 @@ async function run(fn){
 $("copy").onclick=()=>navigator.clipboard.writeText(inbox.address).then(()=>status("地址已复制")).catch(()=>status("请选中上方地址手动复制"));
 $("domain").onchange=()=>{status("已选择 "+$("domain").value+"，点击生成新地址后生效");};
 $("create").onclick=()=>run(create);$("refresh").onclick=()=>run(messages);
-await run(async()=>{
- const boxes=await request("/rest/v1/temp_mail_inboxes?select=*&order=created_at.desc&limit=1");
- if(boxes.length){inbox=boxes[0];showInbox();await messages();}else await create();
-});
+$("reconnect").onclick=()=>{if(loading)return;localStorage.removeItem("temp-mail-session");session=null;inbox=null;$("detail").hidden=true;$("reconnect").hidden=true;run(loadInbox);};
+await run(loadInbox);
 setInterval(()=>{if(!document.hidden)run(messages);},10000);

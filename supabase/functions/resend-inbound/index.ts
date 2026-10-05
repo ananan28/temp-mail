@@ -19,7 +19,7 @@ Deno.serve(async(req:Request)=>{
  const {data:email,error}=await resend.emails.receiving.get(event.data.email_id);
  if(error||!email)return reply(502,"Email retrieval failed");
  const recipients=[...new Set((event.data.to??[]).filter((x:unknown)=>typeof x==="string").map((x:string)=>x.toLowerCase()))]
- .filter((x:string)=>/^(?:[a-f0-9]{10}|[a-f0-9]{32})@temp\.kellykhoo\.com$/.test(x));
+ .filter((x:string)=>/^(?:[a-f0-9]{7,10}|[a-f0-9]{32})@temp\.kellykhoo\.com$/.test(x));
  const base=Deno.env.get("SUPABASE_URL")!;
  const key=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
  const headers={apikey:key,Authorization:"Bearer "+key,"Content-Type":"application/json"};

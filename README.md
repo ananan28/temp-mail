@@ -14,9 +14,9 @@ The handler verifies signatures, retrieves text and HTML, and idempotently store
 
 GitHub Actions workflow .github/workflows/pages.yml publishes the static site. Root domain website/DNS is untouched.
 
-## Additional domains pending DNS
+## Receiving domain selection
 
-mail.kellykhoo.com and inbox.kellykhoo.com are registered in Resend with receiving enabled and sending disabled. They are NOT enabled in application address generation until DNS is verified. Add each subdomain's MX and DKIM records from its Resend dashboard. Never replace root-domain MX records.
+All three receiving subdomains (temp, mail, inbox) have verified MX records; mail and inbox also have verified DKIM. Select a suffix on the web page, then click Generate new address. Changing the selector alone keeps the current inbox accessible. Backend RPC validates the selected suffix against an allowlist and preserves ownership RLS. Existing addresses remain active until expiry. No root-domain DNS changes are required.
 
 ## Verification
 

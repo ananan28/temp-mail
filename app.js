@@ -36,7 +36,8 @@ async function loadInbox(){
  if(boxes.length){inbox=boxes[0];showInbox();await messages();}else await create();
 }
 async function create(){
- const result=await request("/rest/v1/rpc/create_temp_mail_inbox",{method:"POST",body:JSON.stringify({p_domain:$("domain").value})});
+ status("正在生成地址并配置收信…");
+ const result=await request("/functions/v1/create-inbox",{method:"POST",body:JSON.stringify({domain:$("domain").value})});
  inbox=Array.isArray(result)?result[0]:result;
  $("detail").hidden=true;showInbox();await messages();
 }

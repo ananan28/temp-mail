@@ -20,9 +20,9 @@ export async function handler(req:Request):Promise<Response> {
   if(!user.id)throw new Failure(401,'无法验证浏览器身份');
   const input=await req.json().catch(()=>null);
   if(!input||!domains.has(input.domain))throw new Failure(400,'不支持这个邮箱后缀');
-  const isSubdomain=input.domain!=='xzckfn.eu.cc';
+  const isSubdomain=input.domain!=='xzckfn.eu.cc'&&input.domain!=='inbox.kellykhoo.com';
   const token=Deno.env.get('CLOUDFLARE_API_TOKEN');
-  if(isSubdomain&&!token)throw new Failure(503,'这三个后缀尚未配置自动收信令牌，请先使用 xzckfn.eu.cc');
+  if(isSubdomain&&!token)throw new Failure(503,'这些后缀尚未配置自动收信令牌，请先使用 xzckfn.eu.cc');
   const cf=async(path:string,method='GET',body?:unknown)=>{
    const response=await call('https://api.cloudflare.com/client/v4/zones/'+zone+'/email/routing/rules'+path,{method,headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
    const result=await response.json().catch(()=>null);

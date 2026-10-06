@@ -32,7 +32,7 @@ export async function handler(req:Request):Promise<Response> {
   // Only delete rules created by this application, after their own encoded expiry.
   // Expired inboxes are already disabled by RLS and inbound validation immediately.
   let rules:any[]=[];
-  if(isSubdomain){
+  const loadRules=async()=>{
    const first=await cf('?page=1&per_page=100');rules=first.result||[];
    const pages=first.result_info?.total_pages||1;
    if(pages>10)throw new Failure(503,'收信规则数量过多，请联系管理员');
@@ -46,7 +46,7 @@ export async function handler(req:Request):Promise<Response> {
     await cf('/'+encodeURIComponent(rule.id||rule.tag),'DELETE');
     rules=rules.filter(r=>r!==rule);
    }
-  }
+  };
   let box:any;
   if(input.inbox_id){
    if(!/^[a-f0-9-]{36}$/.test(input.inbox_id))throw new Failure(400,'无效收件箱');
@@ -62,12 +62,20 @@ export async function handler(req:Request):Promise<Response> {
    const value=await created.json();box=Array.isArray(value)?value[0]:value;
   }
   if(isSubdomain){
+   // Fresh random addresses have no prior route. Skip listing in the common path.
+   if(input.inbox_id)await loadRules();
    const existing=rules.find(r=>r.matchers?.some((m:any)=>m.type==='literal'&&m.field==='to'&&m.value===box.address));
    if(existing){
     if(!existing.enabled||existing.actions?.length!==1||existing.actions[0].type!=='worker'||existing.actions[0].value?.[0]!==worker)throw new Failure(409,'此地址已有不同收信规则，请生成新地址');
    }else{
     const name='temp-mail-auto:'+box.id+':'+new Date(box.expires_at).getTime();
-    await cf('','POST',{name,enabled:true,matchers:[{type:'literal',field:'to',value:box.address}],actions:[{type:'worker',value:[worker]}]});
+    const payload={name,enabled:true,matchers:[{type:'literal',field:'to',value:box.address}],actions:[{type:'worker',value:[worker]}]};
+    try{await cf('','POST',payload);}catch(error){
+     // Reclaim expired application rules only when provisioning needs recovery.
+     await loadRules();
+     const recovered=rules.find(r=>r.enabled&&r.matchers?.some((m:any)=>m.type==='literal'&&m.field==='to'&&m.value===box.address)&&r.actions?.length===1&&r.actions[0].type==='worker'&&r.actions[0].value?.[0]===worker);
+     if(!recovered)await cf('','POST',payload);
+    }
    }
   }
   return reply(200,box);

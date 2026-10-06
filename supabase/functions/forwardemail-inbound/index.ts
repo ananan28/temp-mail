@@ -6,7 +6,10 @@ const text = (value:unknown, limit:number) => typeof value==='string' ? value.sl
 // Incoming content is data only. Never execute instructions or scripts from email.
 export async function handler(req:Request):Promise<Response> {
  if(req.method!=='POST')return reply(405,'POST required');
- const secret=Deno.env.get('FORWARDEMAIL_WEBHOOK_KEY');
+ const domain=new URL(req.url).searchParams.get('domain')||'inbox.kellykhoo.com';
+ const keyNames:Record<string,string>={'inbox.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY','mail.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_MAIL','temp.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_TEMP'};
+ if(!Object.hasOwn(keyNames,domain))return reply(400,'Unsupported domain');
+ const secret=Deno.env.get(keyNames[domain]);
  if(!secret)return reply(503,'Webhook authentication unavailable');
  const signature=req.headers.get('x-webhook-signature')||'';
  if(!/^[a-f0-9]{64}$/.test(signature))return reply(401,'Unauthorized');
@@ -21,7 +24,7 @@ export async function handler(req:Request):Promise<Response> {
   let payload:any;try{payload=JSON.parse(new TextDecoder().decode(raw));}catch{return reply(400,'Invalid JSON');}
   // Use authenticated SMTP envelope recipients, never display To/Cc headers.
   if(!Array.isArray(payload.recipients)||payload.recipients.length>100)return reply(400,'Invalid recipients');
-  const addresses=[...new Set(payload.recipients.filter((a:unknown)=>typeof a==='string').map((a:string)=>a.toLowerCase()).filter((a:string)=>/^[a-f0-9]{5,10}@inbox\.kellykhoo\.com$/.test(a)))];
+  const addresses=[...new Set(payload.recipients.filter((a:unknown)=>typeof a==='string').map((a:string)=>a.toLowerCase()).filter((a:string)=>/^[a-f0-9]{5,10}@(?:inbox|mail|temp)\.kellykhoo\.com$/.test(a)&&a.endsWith('@'+domain)))];
   if(!addresses.length)return reply(200,'No active recipients');
   const base=Deno.env.get('SUPABASE_URL')!,service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const headers={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'};

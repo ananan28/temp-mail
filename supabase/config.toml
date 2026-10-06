@@ -13,3 +13,6 @@ verify_jwt = false
 # Custom shared-secret authentication for operator diagnostics.
 [functions.receiving-health]
 verify_jwt = false
+
+[functions.forwardemail-inbound]
+verify_jwt = false

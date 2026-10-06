@@ -20,7 +20,7 @@ export async function handler(req:Request):Promise<Response> {
   if(!user.id)throw new Failure(401,'无法验证浏览器身份');
   const input=await req.json().catch(()=>null);
   if(!input||!domains.has(input.domain))throw new Failure(400,'不支持这个邮箱后缀');
-  const isSubdomain=input.domain!=='xzckfn.eu.cc'&&input.domain!=='inbox.kellykhoo.com';
+  const isSubdomain=false; // All supported domains now use preconfigured catch-all receiving.
   const token=Deno.env.get('CLOUDFLARE_API_TOKEN');
   if(isSubdomain&&!token)throw new Failure(503,'这些后缀尚未配置自动收信令牌，请先使用 xzckfn.eu.cc');
   const cf=async(path:string,method='GET',body?:unknown)=>{

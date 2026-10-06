@@ -2,3 +2,10 @@ project_id = "fpidzorviwktkqzntpmv"
 
 [functions.resend-inbound]
 verify_jwt = false
+
+[functions.cloudflare-inbound]
+verify_jwt = false
+
+# The function validates the caller with /auth/v1/user before any mutation.
+[functions.create-inbox]
+verify_jwt = false

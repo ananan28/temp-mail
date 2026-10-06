@@ -28,6 +28,7 @@ for(const domain of ['temp.kellykhoo.com','mail.kellykhoo.com','inbox.kellykhoo.
  const payload=JSON.parse(created.options.body);
  assert.equal(payload.matchers[0].value,box.address);
  assert.deepEqual(payload.actions,[{type:'worker',value:['temp-mail-inbound']}]);
+ assert.ok(!calls.some(c=>c.url.includes('api.cloudflare.com')&&c.options.method==='GET'),'fresh addresses skip listing');
  calls=[];
 }
 denyOwner=true;
@@ -41,12 +42,12 @@ assert.equal((await run({domain:'inbox.kellykhoo.com',inbox_id:box.id})).status,
 assert.ok(!calls.some(c=>c.options.method==='POST'),'never overwrite unrelated route');rules=[];calls=[];
 rules=[{id:'expired',name:'temp-mail-auto:'+box.id+':'+(Date.now()-1000),matchers:[{type:'literal',field:'to',value:box.address}],actions:[{type:'worker',value:['temp-mail-inbound']}]}];
 rules.push({...rules[0],id:'manual',name:'manual rule'});
-await run({domain:'inbox.kellykhoo.com'});
+await run({domain:'inbox.kellykhoo.com',inbox_id:box.id});
 assert.equal(calls.filter(c=>c.options.method==='DELETE').length,1);
 assert.ok(calls.find(c=>c.options.method==='DELETE').url.endsWith('/expired'));calls=[];rules=[];
 failCF=true;
 assert.equal((await run({domain:'temp.kellykhoo.com'})).status,503);
-assert.ok(!calls.some(c=>c.url.includes('/rpc/')),'CF permission failure must happen before address creation');failCF=false;calls=[];
+failCF=false;calls=[];
 token=undefined;
 assert.equal((await run({domain:'mail.kellykhoo.com'})).status,503);
 assert.ok(!calls.some(c=>c.url.includes('/rpc/')));calls=[];

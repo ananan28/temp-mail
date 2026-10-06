@@ -41,7 +41,7 @@ async function loadInbox(){
  }else await create();
 }
 async function create(){
- status($("domain").value==="inbox.kellykhoo.com" ? "正在生成地址…" : "正在生成地址并配置收信…");
+ status("正在生成地址…");
  const result=await request("/functions/v1/create-inbox",{method:"POST",body:JSON.stringify({domain:$("domain").value})});
  inbox=Array.isArray(result)?result[0]:result;
  $("detail").hidden=true;showInbox();$("list").textContent="暂无邮件。收到邮件后会自动显示。";

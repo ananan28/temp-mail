@@ -9,3 +9,7 @@ verify_jwt = false
 # The function validates the caller with /auth/v1/user before any mutation.
 [functions.create-inbox]
 verify_jwt = false
+
+# Custom shared-secret authentication for operator diagnostics.
+[functions.receiving-health]
+verify_jwt = false

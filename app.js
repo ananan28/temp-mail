@@ -33,13 +33,20 @@ function showInbox(){
 }
 async function loadInbox(){
  const boxes=await request("/rest/v1/temp_mail_inboxes?select=*&order=created_at.desc&limit=1");
- if(boxes.length){inbox=boxes[0];showInbox();await messages();}else await create();
+ if(boxes.length){
+  inbox=boxes[0];showInbox();
+  const domain=inbox.address.split("@")[1];
+  if(domain!=="xzckfn.eu.cc")await request("/functions/v1/create-inbox",{method:"POST",body:JSON.stringify({domain,inbox_id:inbox.id})});
+  await messages();
+ }else await create();
 }
 async function create(){
  status("正在生成地址并配置收信…");
  const result=await request("/functions/v1/create-inbox",{method:"POST",body:JSON.stringify({domain:$("domain").value})});
  inbox=Array.isArray(result)?result[0]:result;
- $("detail").hidden=true;showInbox();await messages();
+ $("detail").hidden=true;showInbox();$("list").textContent="暂无邮件。收到邮件后会自动显示。";
+ status("地址已就绪，可以收信");
+ setTimeout(()=>run(messages),0);
 }
 
 function renderBody(mail){

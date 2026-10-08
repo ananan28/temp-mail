@@ -17,3 +17,12 @@ end; $function$;
 create or replace function public.create_temp_mail_inbox()
 returns public.temp_mail_inboxes language sql security invoker set search_path to ''
 as $function$ select public.create_temp_mail_inbox('inbox.kellykhoo.com'::text); $function$;
+do $$
+declare definition text;
+begin
+select pg_get_constraintdef(oid) into definition from pg_constraint where conrelid='public.temp_mail_inboxes'::regclass and conname='temp_mail_inboxes_address_check';
+if definition is null then raise exception 'Address constraint missing'; end if;
+definition:=replace(definition,'temp|mail|inbox','temp|mail|inbox|box|code|receive');
+alter table public.temp_mail_inboxes drop constraint temp_mail_inboxes_address_check;
+execute 'alter table public.temp_mail_inboxes add constraint temp_mail_inboxes_address_check '||definition;
+end $$;

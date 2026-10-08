@@ -27,7 +27,7 @@ async function ensureIdentity(){
 }
 function showInbox(){
  $("address").value=inbox?.address||"";
- if(inbox)$("domain").value=inbox.address.split("@")[1];
+ if(inbox && [...$("domain").options].some(o=>o.value===inbox.address.split("@")[1]))$("domain").value=inbox.address.split("@")[1];
  $("expiry").textContent=inbox?"到期时间："+new Date(inbox.expires_at).toLocaleString():"邮箱已到期，请生成新地址";
  $("copy").disabled=!inbox;
 }

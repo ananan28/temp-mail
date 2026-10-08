@@ -23,3 +23,19 @@ globalThis.fetch=async()=>new Response('',{status:503});
 assert.equal((await handler(request(body))).status,503);
 assert.equal((await handler(new Request('https://receiver.test'))).status,405);
 console.log('PASS: signature rejection, envelope isolation, expiry filtering, retry identity, HTML links, database retry');
+
+for (const suffix of ['box','code','receive']) {
+ const domain=suffix+'.kellykhoo.com', ownSecret='synthetic-'+suffix;
+ globalThis.Deno.env.get=name=>name==='FORWARDEMAIL_WEBHOOK_KEY_'+suffix.toUpperCase()?ownSecret:({FORWARDEMAIL_WEBHOOK_KEY:secret,SUPABASE_URL:'https://database.test',SUPABASE_SERVICE_ROLE_KEY:'test-only-service-key'}[name]);
+ let addressFilter='';
+ globalThis.fetch=async(url,options)=>{
+  if(options.method==='POST')return new Response('',{status:201});
+  addressFilter=new URL(url).searchParams.get('address');return Response.json([{id:'test-owner'}]);
+ };
+ const raw=JSON.stringify({...body,recipients:['abc12@'+domain,'def34@inbox.kellykhoo.com']});
+ const req=key=>new Request('https://receiver.test?domain='+domain,{method:'POST',body:raw,headers:{'x-webhook-signature':createHmac('sha256',key).update(raw).digest('hex')}});
+ assert.equal((await handler(req(secret))).status,401);
+ assert.equal((await handler(req(ownSecret))).status,200);
+ assert.equal(addressFilter,'in.(abc12@'+domain+')');
+}
+console.log('PASS: box/code/receive require their own signature and isolate recipient domains');

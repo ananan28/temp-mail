@@ -24,8 +24,8 @@ assert.equal((await handler(request(body))).status,503);
 assert.equal((await handler(new Request('https://receiver.test'))).status,405);
 console.log('PASS: signature rejection, envelope isolation, expiry filtering, retry identity, HTML links, database retry');
 
-for (const suffix of ['box','code','receive','hahjxbnb']) {
- const domain=suffix==='hahjxbnb'?'hahjxbnb.com':suffix+'.kellykhoo.com', ownSecret='synthetic-'+suffix;
+for (const suffix of ['box','code','receive','hahjxbnb','quick','drop']) {
+ const domain=suffix==='hahjxbnb'?'hahjxbnb.com':['quick','drop'].includes(suffix)?suffix+'.hahjxbnb.com':suffix+'.kellykhoo.com', ownSecret='synthetic-'+suffix;
  globalThis.Deno.env.get=name=>name==='FORWARDEMAIL_WEBHOOK_KEY_'+suffix.toUpperCase()?ownSecret:({FORWARDEMAIL_WEBHOOK_KEY:secret,SUPABASE_URL:'https://database.test',SUPABASE_SERVICE_ROLE_KEY:'test-only-service-key'}[name]);
  let addressFilter='';
  globalThis.fetch=async(url,options)=>{

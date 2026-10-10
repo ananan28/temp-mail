@@ -20,9 +20,9 @@ export async function handler(req:Request):Promise<Response> {
   if(!user.id)throw new Failure(401,'无法验证浏览器身份');
   const input=await req.json().catch(()=>null);
   if(!input||!domains.has(input.domain))throw new Failure(400,'不支持这个邮箱后缀');
-  if(input.domain==='temp.kellykhoo.com'&&!input.inbox_id)throw new Failure(400,'temp 后缀已下架，请选择其他后缀');
+  if(input.domain.endsWith('.kellykhoo.com')&&!input.inbox_id)throw new Failure(400,'Kelly 后缀已下架，请使用 hahjxbnb.com');
   const newKeyNames:Record<string,string>={'hahjxbnb.com':'FORWARDEMAIL_WEBHOOK_KEY_HAHJXBNB','box.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_BOX','code.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_CODE','receive.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_RECEIVE'};
-  if(Object.hasOwn(newKeyNames,input.domain)&&!Deno.env.get(newKeyNames[input.domain]))throw new Failure(503,'这个后缀正在配置，请先使用 mail 或 inbox');
+  if(Object.hasOwn(newKeyNames,input.domain)&&!Deno.env.get(newKeyNames[input.domain]))throw new Failure(503,'这个后缀正在配置，请稍后重试');
   const isSubdomain=input.domain!=='xzckfn.eu.cc'&&!['hahjxbnb.com','inbox.kellykhoo.com','mail.kellykhoo.com','temp.kellykhoo.com','box.kellykhoo.com','code.kellykhoo.com','receive.kellykhoo.com'].includes(input.domain); // Migrated kellykhoo subdomains use Forward Email; retain xzckfn's original catch-all path.
   const token=Deno.env.get('CLOUDFLARE_API_TOKEN');
   if(isSubdomain&&!token)throw new Failure(503,'这些后缀尚未配置自动收信令牌，请先使用 xzckfn.eu.cc');

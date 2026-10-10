@@ -1,4 +1,4 @@
-const domains = new Set(['hahjxbnb.com','temp.kellykhoo.com','mail.kellykhoo.com','inbox.kellykhoo.com','xzckfn.eu.cc','box.kellykhoo.com','code.kellykhoo.com','receive.kellykhoo.com']);
+const domains = new Set(['quick.hahjxbnb.com','drop.hahjxbnb.com','hahjxbnb.com','temp.kellykhoo.com','mail.kellykhoo.com','inbox.kellykhoo.com','xzckfn.eu.cc','box.kellykhoo.com','code.kellykhoo.com','receive.kellykhoo.com']);
 const zone = '60db672b5bccd002efc6644c994d7481';
 const worker = 'temp-mail-inbound';
 const cors = {'Access-Control-Allow-Origin':'https://ananan28.github.io','Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin'};
@@ -21,9 +21,9 @@ export async function handler(req:Request):Promise<Response> {
   const input=await req.json().catch(()=>null);
   if(!input||!domains.has(input.domain))throw new Failure(400,'不支持这个邮箱后缀');
   if(input.domain.endsWith('.kellykhoo.com')&&!input.inbox_id)throw new Failure(400,'Kelly 后缀已下架，请使用 hahjxbnb.com');
-  const newKeyNames:Record<string,string>={'hahjxbnb.com':'FORWARDEMAIL_WEBHOOK_KEY_HAHJXBNB','box.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_BOX','code.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_CODE','receive.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_RECEIVE'};
+  const newKeyNames:Record<string,string>={'quick.hahjxbnb.com':'FORWARDEMAIL_WEBHOOK_KEY_QUICK','drop.hahjxbnb.com':'FORWARDEMAIL_WEBHOOK_KEY_DROP','hahjxbnb.com':'FORWARDEMAIL_WEBHOOK_KEY_HAHJXBNB','box.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_BOX','code.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_CODE','receive.kellykhoo.com':'FORWARDEMAIL_WEBHOOK_KEY_RECEIVE'};
   if(Object.hasOwn(newKeyNames,input.domain)&&!Deno.env.get(newKeyNames[input.domain]))throw new Failure(503,'这个后缀正在配置，请稍后重试');
-  const isSubdomain=input.domain!=='xzckfn.eu.cc'&&!['hahjxbnb.com','inbox.kellykhoo.com','mail.kellykhoo.com','temp.kellykhoo.com','box.kellykhoo.com','code.kellykhoo.com','receive.kellykhoo.com'].includes(input.domain); // Migrated kellykhoo subdomains use Forward Email; retain xzckfn's original catch-all path.
+  const isSubdomain=input.domain!=='xzckfn.eu.cc'&&!['quick.hahjxbnb.com','drop.hahjxbnb.com','hahjxbnb.com','inbox.kellykhoo.com','mail.kellykhoo.com','temp.kellykhoo.com','box.kellykhoo.com','code.kellykhoo.com','receive.kellykhoo.com'].includes(input.domain); // Migrated kellykhoo subdomains use Forward Email; retain xzckfn's original catch-all path.
   const token=Deno.env.get('CLOUDFLARE_API_TOKEN');
   if(isSubdomain&&!token)throw new Failure(503,'这些后缀尚未配置自动收信令牌，请先使用 xzckfn.eu.cc');
   const cf=async(path:string,method='GET',body?:unknown)=>{

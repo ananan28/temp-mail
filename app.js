@@ -112,5 +112,34 @@ $("copy").onclick=()=>navigator.clipboard.writeText(inbox.address).then(()=>stat
 $("domain").onchange=()=>{status("已选择 "+$("domain").value+"，点击生成新地址后生效");};
 $("create").onclick=()=>run(create);$("refresh").onclick=()=>run(messages);
 $("reconnect").onclick=()=>{if(loading)return;localStorage.removeItem("temp-mail-session");session=null;inbox=null;$("detail").hidden=true;$("reconnect").hidden=true;run(loadInbox);};
+
+function randomIndex(max){
+ const value=new Uint32Array(1),limit=Math.floor(4294967296/max)*max;
+ do{crypto.getRandomValues(value);}while(value[0]>=limit);
+ return value[0]%max;
+}
+function randomName(){
+ const first=["Alex","Ethan","Oliver","Noah","Leo","Lucas","Mason","Henry","Liam","Owen","Emma","Ava","Mia","Ella","Lily","Chloe","Sofia","Nora","Grace","Alice"];
+ const last=["Morgan","Taylor","Parker","Reed","Hayes","Brooks","Bennett","Carter","Bailey","Turner","Collins","Foster","Gray","Cooper","Miller","Walker","Scott","Wilson","Davis","Clark"];
+ $("random-name").value=first[randomIndex(first.length)]+" "+last[randomIndex(last.length)];
+}
+function randomPassword(){
+ const groups=["ABCDEFGHJKLMNPQRSTUVWXYZ","abcdefghijkmnopqrstuvwxyz","23456789","!@#$%_-"];
+ const all=groups.join("");
+ const chars=groups.map(g=>g[randomIndex(g.length)]);
+ while(chars.length<16)chars.push(all[randomIndex(all.length)]);
+ for(let i=chars.length-1;i>0;i--){const j=randomIndex(i+1);[chars[i],chars[j]]=[chars[j],chars[i]];}
+ $("random-password").value=chars.join("");
+}
+async function copyRandom(id,label){
+ try{await navigator.clipboard.writeText($(id).value);$("random-status").textContent=label+"已复制";}
+ catch{$(id).focus();$(id).select();$("random-status").textContent="请手动复制已选中的"+label;}
+}
+$("new-name").onclick=()=>{randomName();$("random-status").textContent="名字已重新生成";};
+$("new-password").onclick=()=>{randomPassword();$("random-status").textContent="密码已重新生成";};
+$("copy-name").onclick=()=>copyRandom("random-name","名字");
+$("copy-password").onclick=()=>copyRandom("random-password","密码");
+randomName();randomPassword();
+
 await run(loadInbox);
 setInterval(()=>{if(!document.hidden)run(messages);},10000);

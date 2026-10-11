@@ -127,7 +127,8 @@ function randomPassword(){
  const groups=["ABCDEFGHJKLMNPQRSTUVWXYZ","abcdefghijkmnopqrstuvwxyz","23456789","!@#$%_-"];
  const all=groups.join("");
  const chars=groups.map(g=>g[randomIndex(g.length)]);
- while(chars.length<16)chars.push(all[randomIndex(all.length)]);
+ const length=8+randomIndex(7);
+ while(chars.length<length)chars.push(all[randomIndex(all.length)]);
  for(let i=chars.length-1;i>0;i--){const j=randomIndex(i+1);[chars[i],chars[j]]=[chars[j],chars[i]];}
  $("random-password").value=chars.join("");
 }

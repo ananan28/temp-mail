@@ -142,5 +142,12 @@ $("copy-name").onclick=()=>copyRandom("random-name","名字");
 $("copy-password").onclick=()=>copyRandom("random-password","密码");
 randomName();randomPassword();
 
-await run(loadInbox);
-setInterval(()=>{if(!document.hidden)run(messages);},10000);
+if([...$("domain").options].some(o=>o.value&&!o.disabled)){
+ await run(loadInbox);
+ setInterval(()=>{if(!document.hidden)run(messages);},10000);
+}else{
+ enabled(false);
+ $("address").placeholder="新域名配置中";
+ $("list").textContent="新域名接通后恢复收信。";
+ status("原后缀已下架，正在接入 niasdnakd.cam");
+}

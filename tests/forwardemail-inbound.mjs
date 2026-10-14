@@ -24,8 +24,8 @@ assert.equal((await handler(request(body))).status,503);
 assert.equal((await handler(new Request('https://receiver.test'))).status,405);
 console.log('PASS: signature rejection, envelope isolation, expiry filtering, retry identity, HTML links, database retry');
 
-for (const suffix of ['box','code','receive','hahjxbnb','quick','drop','hahjxbnb_box','hahjxbnb_code','loriqiu']) {
- const domain=suffix==='loriqiu'?'loriqiu.com':suffix.startsWith('niasdnakd_')?suffix.slice(10)+'.niasdnakd.cam':suffix==='niasdnakd'?'niasdnakd.cam':suffix==='hahjxbnb_box'?'box.hahjxbnb.com':suffix==='hahjxbnb_code'?'code.hahjxbnb.com':suffix==='hahjxbnb'?'hahjxbnb.com':['quick','drop'].includes(suffix)?suffix+'.hahjxbnb.com':suffix+'.kellykhoo.com', ownSecret='synthetic-'+suffix;
+for (const suffix of ['box','code','receive','hahjxbnb','quick','drop','hahjxbnb_box','hahjxbnb_code','loriqiu','loriqiu_amber','loriqiu_cedar','loriqiu_orbit']) {
+ const domain=suffix.startsWith('loriqiu_')?suffix.slice(8)+'.loriqiu.com':suffix==='loriqiu'?'loriqiu.com':suffix.startsWith('niasdnakd_')?suffix.slice(10)+'.niasdnakd.cam':suffix==='niasdnakd'?'niasdnakd.cam':suffix==='hahjxbnb_box'?'box.hahjxbnb.com':suffix==='hahjxbnb_code'?'code.hahjxbnb.com':suffix==='hahjxbnb'?'hahjxbnb.com':['quick','drop'].includes(suffix)?suffix+'.hahjxbnb.com':suffix+'.kellykhoo.com', ownSecret='synthetic-'+suffix;
  globalThis.Deno.env.get=name=>name==='FORWARDEMAIL_WEBHOOK_KEY_'+suffix.toUpperCase()?ownSecret:({FORWARDEMAIL_WEBHOOK_KEY:secret,SUPABASE_URL:'https://database.test',SUPABASE_SERVICE_ROLE_KEY:'test-only-service-key'}[name]);
  let addressFilter='';
  globalThis.fetch=async(url,options)=>{

@@ -44,6 +44,8 @@ async function create(){
  status("正在生成地址…");
  const result=await request("/functions/v1/create-inbox",{method:"POST",body:JSON.stringify({domain:$("domain").value})});
  inbox=Array.isArray(result)?result[0]:result;
+ randomName();randomPassword();
+ $("random-status").textContent="新邮箱、名字和密码已一起生成";
  $("detail").hidden=true;showInbox();$("list").textContent="暂无邮件。收到邮件后会自动显示。";
  status("地址已就绪，可以收信");
  setTimeout(()=>run(messages),0);
@@ -149,5 +151,5 @@ if([...$("domain").options].some(o=>o.value&&!o.disabled)){
  enabled(false);
  $("address").placeholder="新域名配置中";
  $("list").textContent="新域名接通后恢复收信。";
- status("原后缀已下架，正在接入 fkoskokx.com");
+ status("原后缀已下架，正在接入 hahjxbnb.com");
 }

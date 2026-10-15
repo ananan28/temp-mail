@@ -151,5 +151,5 @@ if([...$("domain").options].some(o=>o.value&&!o.disabled)){
  enabled(false);
  $("address").placeholder="新域名配置中";
  $("list").textContent="新域名接通后恢复收信。";
- status("原后缀已下架，正在接入 hahjxbnb.com");
+ status("原后缀已下架，正在接入 jnjknmmn.cam");
 }

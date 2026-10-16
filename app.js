@@ -126,7 +126,7 @@ function randomName(){
  $("random-name").value=first[randomIndex(first.length)]+" "+last[randomIndex(last.length)];
 }
 function randomPassword(){
- const groups=["ABCDEFGHJKLMNPQRSTUVWXYZ","abcdefghijkmnopqrstuvwxyz","23456789","!@#$%_-"];
+ const groups=["ABCDEFGHJKLMNPQRSTUVWXYZ","abcdefghijkmnopqrstuvwxyz","23456789","!#$%_-"];
  const all=groups.join("");
  const chars=groups.map(g=>g[randomIndex(g.length)]);
  const length=8+randomIndex(7);

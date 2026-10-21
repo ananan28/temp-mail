@@ -149,7 +149,7 @@ if([...$("domain").options].some(o=>o.value&&!o.disabled)){
  setInterval(()=>{if(!document.hidden)run(messages);},10000);
 }else{
  enabled(false);
- $("address").placeholder="邮箱已下架";
+ $("address").placeholder="新域名配置中";
  $("list").textContent="所有邮箱后缀已停用。";
- status("所有邮箱后缀已下架，暂不提供收信");
+ status("旧后缀已下架，正在接入 bcvbcvaxasdfs.cam");
 }

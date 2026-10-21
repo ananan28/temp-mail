@@ -8,7 +8,7 @@ export async function handler(req:Request):Promise<Response> {
  if(req.method!=='POST')return reply(405,'POST required');
  const domain=new URL(req.url).searchParams.get('domain')||'inbox.kellykhoo.com';
  if(domain==='fkoskokx.com'||domain.endsWith('.fkoskokx.com')||domain==='orbit.fkoskokx.com'||domain==='niasdnakd.cam'||domain.endsWith('.niasdnakd.cam')||domain==='loriqiu.com'||domain.endsWith('.loriqiu.com')||domain==='fkoskokx.com')return reply(410,'Receiving domain retired');
- const keyNames:Record<string,string>={'lake.bcvbcvsdfs.icu':'FORWARDEMAIL_WEBHOOK_KEY_BCVBCVSDFS_LAKE','mist.bcvbcvsdfs.icu':'FORWARDEMAIL_WEBHOOK_KEY_BCVBCVSDFS_MIST'};
+ const keyNames:Record<string,string>={};
  if(!Object.hasOwn(keyNames,domain))return reply(410,'Receiving domain retired');
  const secret=Deno.env.get(keyNames[domain]);
  if(!secret)return reply(503,'Webhook authentication unavailable');

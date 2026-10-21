@@ -149,7 +149,7 @@ if([...$("domain").options].some(o=>o.value&&!o.disabled)){
  setInterval(()=>{if(!document.hidden)run(messages);},10000);
 }else{
  enabled(false);
- $("address").placeholder="新域名配置中";
- $("list").textContent="新域名接通后恢复收信。";
- status("原后缀已下架，正在接入 bcvbcvsdfs.icu");
+ $("address").placeholder="邮箱已下架";
+ $("list").textContent="所有邮箱后缀已停用。";
+ status("所有邮箱后缀已下架，暂不提供收信");
 }

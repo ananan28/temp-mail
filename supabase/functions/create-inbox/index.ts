@@ -1,4 +1,4 @@
-const domains = new Set(['lake.bcvbcvsdfs.icu','mist.bcvbcvsdfs.icu']);
+const domains = new Set<string>();
 const cors = {'Access-Control-Allow-Origin':'https://ananan28.github.io','Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin'};
 const reply = (status:number, body:unknown) => new Response(JSON.stringify(body), {status,headers:{...cors,'Content-Type':'application/json','Cache-Control':'no-store'}});
 class Failure extends Error { status:number; constructor(status:number,message:string){super(message);this.status=status;} }

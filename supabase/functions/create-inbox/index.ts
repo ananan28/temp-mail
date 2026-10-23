@@ -1,4 +1,4 @@
-const domains = new Set(['ash.bcvbcvaxasdfs.cam','glen.bcvbcvaxasdfs.cam']);
+const domains = new Set(['elm.lori1988.com','vale.lori1988.com']);
 const cors = {'Access-Control-Allow-Origin':'https://ananan28.github.io','Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin'};
 const reply = (status:number, body:unknown) => new Response(JSON.stringify(body), {status,headers:{...cors,'Content-Type':'application/json','Cache-Control':'no-store'}});
 class Failure extends Error { status:number; constructor(status:number,message:string){super(message);this.status=status;} }
@@ -18,7 +18,7 @@ export async function handler(req:Request):Promise<Response> {
   if(!user.id)throw new Failure(401,'无法验证浏览器身份');
   const input=await req.json().catch(()=>null);
   if(!input||!domains.has(input.domain))throw new Failure(400,'不支持这个邮箱后缀');
-  const newKeyNames:Record<string,string>={'ash.bcvbcvaxasdfs.cam':'FORWARDEMAIL_WEBHOOK_KEY_BCVBCVAXASDFS_ASH','glen.bcvbcvaxasdfs.cam':'FORWARDEMAIL_WEBHOOK_KEY_BCVBCVAXASDFS_GLEN'};
+  const newKeyNames:Record<string,string>={'elm.lori1988.com':'FORWARDEMAIL_WEBHOOK_KEY_LORI1988_ELM','vale.lori1988.com':'FORWARDEMAIL_WEBHOOK_KEY_LORI1988_VALE'};
   if(Object.hasOwn(newKeyNames,input.domain)&&!Deno.env.get(newKeyNames[input.domain]))throw new Failure(503,'这个后缀正在配置，请稍后重试');
   let box:any;
   if(input.inbox_id){

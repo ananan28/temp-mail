@@ -8,7 +8,7 @@ export async function handler(req:Request):Promise<Response> {
  if(req.method!=='POST')return reply(405,'POST required');
  const domain=new URL(req.url).searchParams.get('domain')||'inbox.kellykhoo.com';
  if(domain==='fkoskokx.com'||domain.endsWith('.fkoskokx.com')||domain==='orbit.fkoskokx.com'||domain==='niasdnakd.cam'||domain.endsWith('.niasdnakd.cam')||domain==='loriqiu.com'||domain.endsWith('.loriqiu.com')||domain==='fkoskokx.com')return reply(410,'Receiving domain retired');
- const keyNames:Record<string,string>={'elm.lori1988.com':'FORWARDEMAIL_WEBHOOK_KEY_LORI1988_ELM','vale.lori1988.com':'FORWARDEMAIL_WEBHOOK_KEY_LORI1988_VALE'};
+ const keyNames:Record<string,string>={'willow.dfjklsxcv.cam':'FORWARDEMAIL_WEBHOOK_KEY_DFJKLSXCV_WILLOW','bay.dfjklsxcv.cam':'FORWARDEMAIL_WEBHOOK_KEY_DFJKLSXCV_BAY'};
  if(!Object.hasOwn(keyNames,domain))return reply(410,'Receiving domain retired');
  const secret=Deno.env.get(keyNames[domain]);
  if(!secret)return reply(503,'Webhook authentication unavailable');
@@ -25,7 +25,7 @@ export async function handler(req:Request):Promise<Response> {
   let payload:any;try{payload=JSON.parse(new TextDecoder().decode(raw));}catch{return reply(400,'Invalid JSON');}
   // Use authenticated SMTP envelope recipients, never display To/Cc headers.
   if(!Array.isArray(payload.recipients)||payload.recipients.length>100)return reply(400,'Invalid recipients');
-  const addresses=[...new Set(payload.recipients.filter((a:unknown)=>typeof a==='string').map((a:string)=>a.toLowerCase()).filter((a:string)=>/^[a-f0-9]{5,10}@(elm|vale)\.lori1988\.com$/.test(a)&&a.endsWith('@'+domain)))];
+  const addresses=[...new Set(payload.recipients.filter((a:unknown)=>typeof a==='string').map((a:string)=>a.toLowerCase()).filter((a:string)=>/^[a-f0-9]{5,10}@(willow|bay)\.dfjklsxcv\.cam$/.test(a)&&a.endsWith('@'+domain)))];
   if(!addresses.length)return reply(200,'No active recipients');
   const base=Deno.env.get('SUPABASE_URL')!,service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const headers={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'};

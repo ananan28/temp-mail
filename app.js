@@ -151,5 +151,5 @@ if([...$("domain").options].some(o=>o.value&&!o.disabled)){
  enabled(false);
  $("address").placeholder="新域名配置中";
  $("list").textContent="所有邮箱后缀已停用。";
- status("旧后缀已下架，正在接入 cmdskaqi.cam");
+ status("旧后缀已下架，正在接入 cxsklcxzmcxk.cam");
 }

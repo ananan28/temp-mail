@@ -122,7 +122,7 @@ function randomIndex(max){
 }
 function randomName(){
  const first=["Alex","Ethan","Oliver","Noah","Leo","Lucas","Mason","Henry","Liam","Owen","Emma","Ava","Mia","Ella","Lily","Chloe","Sofia","Nora","Grace","Alice"];
- const last=["Morgan","Taylor","Parker","Reed","Hayes","Brooks","Bennett","Carter","Bailey","Turner","Collins","Foster","Gray","Cooper","Miller","Walker","Scott","Wilson","Davis","Clark"];
+ const last=["Morgan","Taylor","Parker","Reed","Hayes","Brooks","Bennett","Carter","Bailey","Turner","Collins","Foster","Gray","Cooper","Miller","Walker","Scott","Wilson","Davis","Cstone"];
  $("random-name").value=first[randomIndex(first.length)]+" "+last[randomIndex(last.length)];
 }
 function randomPassword(){
@@ -151,5 +151,5 @@ if([...$("domain").options].some(o=>o.value&&!o.disabled)){
  enabled(false);
  $("address").placeholder="新域名配置中";
  $("list").textContent="所有邮箱后缀已停用。";
- status("旧后缀已下架，正在接入 cxsklcxzmcxk.cam");
+ status("旧后缀已下架，正在接入 xaadsasaa.cam");
 }

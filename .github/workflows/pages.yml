@@ -35,7 +35,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          gh api repos/ananan28/temp-mail/pages/deployments/410fb59c549129d2f2e1e6808946757823153bbf || true
           gh api --method POST repos/ananan28/temp-mail/pages/deployments/410fb59c549129d2f2e1e6808946757823153bbf/cancel || true
+          for attempt in $(seq 1 12); do
+            state=$(gh api repos/ananan28/temp-mail/pages/deployments/410fb59c549129d2f2e1e6808946757823153bbf --jq '.status' || true)
+            echo "Previous Pages deployment: $state"
+            case "$state" in
+              succeeded|cancelled|canceled|failed|deployment_failed) break ;;
+            esac
+            sleep 5
+          done
       - name: Publish site
         id: deployment
         uses: actions/deploy-pages@v4

@@ -17,6 +17,9 @@ export async function handler(req:Request):Promise<Response> {
   const user=await identity.json();
   if(!user.id)throw new Failure(401,'无法验证浏览器身份');
   const input=await req.json().catch(()=>null);
+  // Compatibility for cached Pages clients; only newly active addresses are created.
+  const retiredClientDomains:Record<string,string>={'harbor.cxsklcxzmcxk.cam':'raven.xaadsasaa.cam','lark.cxsklcxzmcxk.cam':'stone.xaadsasaa.cam'};
+  if(input && !input.inbox_id && Object.hasOwn(retiredClientDomains,input.domain))input.domain=retiredClientDomains[input.domain];
   if(!input||!domains.has(input.domain))throw new Failure(400,'不支持这个邮箱后缀');
   const newKeyNames:Record<string,string>={'raven.xaadsasaa.cam':'FORWARDEMAIL_WEBHOOK_KEY_XAADSASAA_RAVEN','stone.xaadsasaa.cam':'FORWARDEMAIL_WEBHOOK_KEY_XAADSASAA_STONE'};
   if(Object.hasOwn(newKeyNames,input.domain)&&!Deno.env.get(newKeyNames[input.domain]))throw new Failure(503,'这个后缀正在配置，请稍后重试');

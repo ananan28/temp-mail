@@ -122,7 +122,7 @@ function randomIndex(max){
 }
 function randomName(){
  const first=["Alex","Ethan","Oliver","Noah","Leo","Lucas","Mason","Henry","Liam","Owen","Emma","Ava","Mia","Ella","Lily","Chloe","Sofia","Nora","Grace","Alice"];
- const last=["Morgan","Taylor","Parker","Reed","Hayes","Brooks","Bennett","Carter","Bailey","Turner","Collins","Foster","Gray","Cooper","Miller","Walker","Scott","Wilson","Davis","Cstone"];
+ const last=["Morgan","Taylor","Parker","Reed","Hayes","Brooks","Bennett","Carter","Bailey","Turner","Collins","Foster","Gray","Cooper","Miller","Walker","Scott","Wilson","Davis","Clark"];
  $("random-name").value=first[randomIndex(first.length)]+" "+last[randomIndex(last.length)];
 }
 function randomPassword(){

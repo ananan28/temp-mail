@@ -7,20 +7,32 @@ on:
 permissions:
   contents: read
   pages: write
+  id-token: write
 concurrency:
   group: temp-mail-pages
   cancel-in-progress: false
 jobs:
   deploy:
     runs-on: ubuntu-22.04
-    timeout-minutes: 5
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Validate JavaScript
-        run: node --check app.js
-      - name: Recover Pages branch publishing
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - uses: actions/configure-pages@v5
+      - name: Prepare static site
         run: |
-          gh api --method PUT repos/ananan28/temp-mail/pages -f build_type=legacy -f 'source[branch]=main' -f 'source[path]=/'
-          gh api --method POST repos/ananan28/temp-mail/pages/builds
+          mkdir -p _site
+          cp index.html app.js style.css _site/
+          touch _site/.nojekyll
+          node --check app.js
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Publish site
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}

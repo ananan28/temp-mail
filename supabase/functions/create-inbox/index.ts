@@ -1,4 +1,4 @@
-const domains = new Set(['flint.qoamxa.cam','wren.qoamxa.cam']);
+const domains = new Set(['bloom.fnllq.shop','crest.fnllq.shop']);
 const cors = {'Access-Control-Allow-Origin':'https://ananan28.github.io','Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin'};
 const reply = (status:number, body:unknown) => new Response(JSON.stringify(body), {status,headers:{...cors,'Content-Type':'application/json','Cache-Control':'no-store'}});
 class Failure extends Error { status:number; constructor(status:number,message:string){super(message);this.status=status;} }
@@ -18,7 +18,7 @@ export async function handler(req:Request):Promise<Response> {
   if(!user.id)throw new Failure(401,'无法验证浏览器身份');
   const input=await req.json().catch(()=>null);
   if(!input||!domains.has(input.domain))throw new Failure(400,'不支持这个邮箱后缀');
-  const newKeyNames:Record<string,string>={'flint.qoamxa.cam':'FORWARDEMAIL_WEBHOOK_KEY_QOAMXA_FLINT','wren.qoamxa.cam':'FORWARDEMAIL_WEBHOOK_KEY_QOAMXA_WREN'};
+  const newKeyNames:Record<string,string>={'bloom.fnllq.shop':'FORWARDEMAIL_WEBHOOK_KEY_FNLLQ_BLOOM','crest.fnllq.shop':'FORWARDEMAIL_WEBHOOK_KEY_FNLLQ_CREST'};
   if(Object.hasOwn(newKeyNames,input.domain)&&!Deno.env.get(newKeyNames[input.domain]))throw new Failure(503,'这个后缀正在配置，请稍后重试');
   let box:any;
   if(input.inbox_id){

@@ -36,7 +36,7 @@ async function loadInbox(){
  if(boxes.length && [...$("domain").options].some(o=>o.value===boxes[0].address.split("@")[1])){
   inbox=boxes[0];showInbox();
   const domain=inbox.address.split("@")[1];
-  if(domain!=="xzckfn.eu.cc")await request("/functions/v1/create-inbox",{method:"POST",body:JSON.stringify({domain,inbox_id:inbox.id})});
+  await request("/functions/v1/create-inbox",{method:"POST",body:JSON.stringify({domain,inbox_id:inbox.id})});
   await messages();
  }else await create();
 }

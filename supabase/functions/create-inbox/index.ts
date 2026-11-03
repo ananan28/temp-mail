@@ -1,4 +1,4 @@
-const domains = new Set(['maple.polkmk4.art','birch.polkmk4.art']);
+const domains = new Set(['cobalt.polkmk4.art','willow.polkmk4.art']);
 const cors = {'Access-Control-Allow-Origin':'https://ananan28.github.io','Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin'};
 const reply = (status:number, body:unknown) => new Response(JSON.stringify(body), {status,headers:{...cors,'Content-Type':'application/json','Cache-Control':'no-store'}});
 class Failure extends Error { status:number; constructor(status:number,message:string){super(message);this.status=status;} }
@@ -18,7 +18,7 @@ export async function handler(req:Request):Promise<Response> {
   if(!user.id)throw new Failure(401,'无法验证浏览器身份');
   const input=await req.json().catch(()=>null);
   if(!input||!domains.has(input.domain))throw new Failure(400,'不支持这个邮箱后缀');
-  const newKeyNames:Record<string,string>={'maple.polkmk4.art':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_MAPLE','birch.polkmk4.art':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_BIRCH'};
+  const newKeyNames:Record<string,string>={'cobalt.polkmk4.art':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_MAPLE','willow.polkmk4.art':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_BIRCH'};
   if(Object.hasOwn(newKeyNames,input.domain)&&!Deno.env.get(newKeyNames[input.domain]))throw new Failure(503,'这个后缀正在配置，请稍后重试');
   let box:any;
   if(input.inbox_id){

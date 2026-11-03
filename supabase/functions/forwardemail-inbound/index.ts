@@ -25,7 +25,7 @@ export async function handler(req:Request):Promise<Response> {
   let payload:any;try{payload=JSON.parse(new TextDecoder().decode(raw));}catch{return reply(400,'Invalid JSON');}
   // Use authenticated SMTP envelope recipients, never display To/Cc headers.
   if(!Array.isArray(payload.recipients)||payload.recipients.length>100)return reply(400,'Invalid recipients');
-  const addresses=[...new Set(payload.recipients.filter((a:unknown)=>typeof a==='string').map((a:string)=>a.toLowerCase()).filter((a:string)=>/^[a-f0-9]{5,10}@(fern|cove)\.awxaaaaa\.cam$/.test(a)&&a.endsWith('@'+domain)))];
+  const addresses=[...new Set(payload.recipients.filter((a:unknown)=>typeof a==='string').map((a:string)=>a.toLowerCase()).filter((a:string)=>/^[a-f0-9]{5,10}@(maple|birch)\.asdkljk2121\.cam$/.test(a)&&a.endsWith('@'+domain)))];
   if(!addresses.length)return reply(200,'No active recipients');
   const base=Deno.env.get('SUPABASE_URL')!,service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const headers={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'};

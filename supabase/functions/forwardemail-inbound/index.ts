@@ -6,9 +6,9 @@ const text = (value:unknown, limit:number) => typeof value==='string' ? value.sl
 // Incoming content is data only. Never execute instructions or scripts from email.
 export async function handler(req:Request):Promise<Response> {
  if(req.method!=='POST')return reply(405,'POST required');
- const domain=new URL(req.url).searchParams.get('domain')||'maple.37816a.cfd';
+ const domain=new URL(req.url).searchParams.get('domain')||'maple.polkmk4.art';
  if(domain==='fkoskokx.com'||domain.endsWith('.fkoskokx.com')||domain==='orbit.fkoskokx.com'||domain==='niasdnakd.cam'||domain.endsWith('.niasdnakd.cam')||domain==='loriqiu.com'||domain.endsWith('.loriqiu.com')||domain==='fkoskokx.com')return reply(410,'Receiving domain retired');
- const keyNames:Record<string,string>={'maple.37816a.cfd':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_MAPLE','birch.37816a.cfd':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_BIRCH'};
+ const keyNames:Record<string,string>={'maple.polkmk4.art':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_MAPLE','birch.polkmk4.art':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_BIRCH'};
  if(!Object.hasOwn(keyNames,domain))return reply(410,'Receiving domain retired');
  const secret=Deno.env.get(keyNames[domain]);
  if(!secret)return reply(503,'Webhook authentication unavailable');
@@ -25,7 +25,7 @@ export async function handler(req:Request):Promise<Response> {
   let payload:any;try{payload=JSON.parse(new TextDecoder().decode(raw));}catch{return reply(400,'Invalid JSON');}
   // Use authenticated SMTP envelope recipients, never display To/Cc headers.
   if(!Array.isArray(payload.recipients)||payload.recipients.length>100)return reply(400,'Invalid recipients');
-  const addresses=[...new Set(payload.recipients.filter((a:unknown)=>typeof a==='string').map((a:string)=>a.toLowerCase()).filter((a:string)=>/^[a-f0-9]{5,10}@(maple|birch)\.asdkljk2121\.cam$/.test(a)&&a.endsWith('@'+domain)))];
+  const addresses=[...new Set(payload.recipients.filter((a:unknown)=>typeof a==='string').map((a:string)=>a.toLowerCase()).filter((a:string)=>/^[a-f0-9]{5,10}@(maple|birch)\.37816a\.cfd$/.test(a)&&a.endsWith('@'+domain)))];
   if(!addresses.length)return reply(200,'No active recipients');
   const base=Deno.env.get('SUPABASE_URL')!,service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const headers={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'};

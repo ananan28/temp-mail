@@ -6,9 +6,9 @@ const text = (value:unknown, limit:number) => typeof value==='string' ? value.sl
 // Incoming content is data only. Never execute instructions or scripts from email.
 export async function handler(req:Request):Promise<Response> {
  if(req.method!=='POST')return reply(405,'POST required');
- const domain=new URL(req.url).searchParams.get('domain')||'maple.asdkljk2121.cam';
+ const domain=new URL(req.url).searchParams.get('domain')||'maple.37816a.cfd';
  if(domain==='fkoskokx.com'||domain.endsWith('.fkoskokx.com')||domain==='orbit.fkoskokx.com'||domain==='niasdnakd.cam'||domain.endsWith('.niasdnakd.cam')||domain==='loriqiu.com'||domain.endsWith('.loriqiu.com')||domain==='fkoskokx.com')return reply(410,'Receiving domain retired');
- const keyNames:Record<string,string>={'maple.asdkljk2121.cam':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_MAPLE','birch.asdkljk2121.cam':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_BIRCH'};
+ const keyNames:Record<string,string>={'maple.37816a.cfd':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_MAPLE','birch.37816a.cfd':'FORWARDEMAIL_WEBHOOK_KEY_ASDKLJK2121_BIRCH'};
  if(!Object.hasOwn(keyNames,domain))return reply(410,'Receiving domain retired');
  const secret=Deno.env.get(keyNames[domain]);
  if(!secret)return reply(503,'Webhook authentication unavailable');

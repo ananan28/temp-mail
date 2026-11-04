@@ -1,0 +1,2 @@
+ALTER TABLE public.temp_mail_inboxes DROP CONSTRAINT temp_mail_inboxes_fvbonk_active_domain_check;
+ALTER TABLE public.temp_mail_inboxes ADD CONSTRAINT temp_mail_inboxes_cvxlwasd_domain_check CHECK (address ~ '^[a-f0-9]{5,10}@(cobalt|willow)[.]fvbonk[.]buzz$' OR address ~ '^[a-f0-9]{5,10}@(spruce|brook)[.]cvxlwasd[.]bond$') NOT VALID;

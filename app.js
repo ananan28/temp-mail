@@ -151,5 +151,5 @@ if([...$("domain").options].some(o=>o.value&&!o.disabled)){
  enabled(false);
  $("address").placeholder="新域名配置中";
  $("list").textContent="所有邮箱后缀已停用。";
- status("旧前缀已轮换，当前使用 spruce.cvxlwasd.bond / brook.cvxlwasd.bond");
+ status("旧前缀已轮换，当前使用 birch.vxcladskz.help / meadow.vxcladskz.help");
 }
